@@ -1,3 +1,3 @@
 # AA_A1
 
-Replace LinkedList in the zip file with the uploaded LinkedList
+git clone https://github.com/s3714217/AA_A1/master
