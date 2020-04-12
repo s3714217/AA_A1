@@ -15,15 +15,18 @@ public class OrderedArrayRQ implements Runqueue {
 
     
 	private int size;
-	private String procArray[];
-	private int procVT[];
+	//private String procArray[];
+	//private int procVT[];
+	
+	private Proc procArray[];
+	
 	private final int INI_SIZE = 1;
 	private boolean sorted = false;
 	
     public OrderedArrayRQ() {
         size = INI_SIZE;
-        procArray = new String[size];
-    	procVT = new int[size];
+        procArray = new Proc[size];
+    //	procVT = new int[size];
     }  // end of OrderedArrayRQ()
 
     @Override
@@ -31,12 +34,12 @@ public class OrderedArrayRQ implements Runqueue {
         // Implement me
     	
    		//Assign the proc and its vt
-    	this.procArray[this.size-this.INI_SIZE] = procLabel;
-    	this.procVT[this.size-this.INI_SIZE] = vt;	
+    	Proc temp = new Proc(procLabel, vt);
+    	this.procArray[this.size-this.INI_SIZE] = temp;
     	this.size++;
 
     	//Expanding the array    		
-   		this.procVT = Arrays.copyOf(this.procVT, this.size);
+   		
     	this.procArray = Arrays.copyOf(this.procArray, this.size);
     	this.sorted = false;
     	
@@ -47,7 +50,7 @@ public class OrderedArrayRQ implements Runqueue {
     @Override
     public String dequeue() {
     	
-        String temp = null;
+        Proc temp = null;
         if(!sorted)
     	{this.Sorting();}
     	for(int x = 0; x < size; x++)
@@ -55,21 +58,22 @@ public class OrderedArrayRQ implements Runqueue {
     		if(this.procArray[x] != null)
     		{
     			temp = procArray[x];
-    			this.removeProcess(procArray[x]);break;
+    			this.removeProcess(procArray[x].label);break;
     		}
     	}
     	
-    	return temp;
+    	
+    	return temp.label;
     	// placeholder,modify this
     } // end of dequeue()
 
     @Override
     public boolean findProcess(String procLabel){
         
-    	String Proc = null;
-    	for(String x: this.procArray)
+    	Proc Proc = null;
+    	for(Proc x: this.procArray)
     	{
-    		if(x!= null && x.equals(procLabel))
+    		if(x!= null && x.label.equals(procLabel))
     		{
     			Proc = x;
     		}
@@ -92,10 +96,9 @@ public class OrderedArrayRQ implements Runqueue {
     	boolean removed = false;
     	for(int x= 0; x < this.size; x++)
     	{
-    		if(this.procArray[x] != null && this.procArray[x].equals(procLabel))
+    		if(this.procArray[x] != null && this.procArray[x].label.equals(procLabel))
     		{
     			this.procArray[x] = null;
-    			this.procVT[x] = 0;
     			removed = true;break;
     		}
     	}
@@ -115,16 +118,18 @@ public class OrderedArrayRQ implements Runqueue {
          if(this.findProcess(procLabel))
      	{
          for(int x = 0; x< this.size;x++)
-         {
+         { if(this.procArray[x] != null)
+         	{	
         	
-        		if(procLabel.equals(this.procArray[x]))
+        		if(procLabel.equals(this.procArray[x].label))
         		{	
         			totalPt++;
         			break;
         		}
-        		System.out.println(this.procVT[x]);
-        		totalPt += this.procVT[x]; 
+        		
+        		totalPt += this.procArray[x].vt; 
         	}
+         }
        	  
        	  }
     	
@@ -143,14 +148,20 @@ public class OrderedArrayRQ implements Runqueue {
       
       for(int x = 0; x< this.size;x++)
       {
-    	  if(procLabel.equals(this.procArray[x])
+    	  if(this.procArray[x] != null)
+    	  {
+    	  if(procLabel.equals(this.procArray[x].label)
     	   && x+1 < this.size)
     	  {		totalPt++;
     		  for (int y = x+1; y<this.size; y++)
     		  {
-    			  totalPt += this.procVT[y];
+    			  if(this.procArray[y] != null)
+    	    	  {
+    				  totalPt += this.procArray[y].vt;
+    	    	  }
     		  }
     		  break;
+    	  }
     	  }
       }
       
@@ -170,7 +181,7 @@ public class OrderedArrayRQ implements Runqueue {
     	{
     		if (this.procArray[x] != null)
     		{
-    		 AllProc += this.procArray[x] + " ";
+    		 AllProc += this.procArray[x].label + " ";
     		}
     	}
     	
@@ -187,27 +198,29 @@ public class OrderedArrayRQ implements Runqueue {
     	
     	while(sortedProc <= this.size)
     	{
+    		
     		if(checkingPos == this.size -2)
     		{
     			sortedProc++;
     			checkingPos = 0;
     		}
-    		if(this.procVT[checkingPos] > this.procVT[checkingPos+1])
+    	  if(this.procArray[checkingPos] != null && this.procArray[checkingPos+1] != null)
+    	  {
+    		if(this.procArray[checkingPos].vt > this.procArray[checkingPos+1].vt)
     		{
-    			int temp;
-    			String tempS;
     			
-    			temp = this.procVT[checkingPos];
-    			tempS = this.procArray[checkingPos];
+    			Proc temp;
     			
-    			this.procVT[checkingPos] = this.procVT[checkingPos+1] ;
+    			temp = this.procArray[checkingPos];
+    			
     			this.procArray[checkingPos] = this.procArray[checkingPos+1];
     			
-    			this.procVT[checkingPos+1] = temp;
-    			this.procArray[checkingPos+1] = tempS;
+    			this.procArray[checkingPos+1] = temp;
     			
     			
     		}
+    	  }
+    		
     		checkingPos++;
     			
     	}
