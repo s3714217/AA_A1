@@ -13,16 +13,16 @@ import java.util.Arrays;
 public class OrderedLinkedListRQ implements Runqueue {
 	
 	private int size;
-	private String procList[];
+	//private String procList[];
 	private int front[], back[];
-	private int procVT[];
+	//private int procVT[];
+	private Proc procArr[];
 	private final int INI_SIZE = 1;
 	
     
     public OrderedLinkedListRQ() {
     	size = 2;
-        procList = new String[size];
-    	procVT = new int[size];
+        procArr = new Proc[size];
     	front = new int[size];
     	back = new int[size];
     }  // end of OrderedLinkedList()
@@ -32,23 +32,23 @@ public class OrderedLinkedListRQ implements Runqueue {
     public void enqueue(String procLabel, int vt) {
         
     	//Assign the proc and its vt
-    	this.procList[this.size-this.INI_SIZE] = procLabel;
-		this.procVT[this.size-this.INI_SIZE] = vt;
+    	this.procArr[this.size-this.INI_SIZE] = new Proc(procLabel,vt);
+		
 		
 		int checkingPos = 1;
 		while(checkingPos != 0)
 		{
 		 if(this.size > 2)
 		 {
-		  if(this.procList[checkingPos] != null)
+		  if(this.procArr[checkingPos] != null )
 		  {
-			if(this.procVT[checkingPos] <= vt)
+			if(this.procArr[checkingPos].vt <= vt)
 			{
 				
 				
 			  if(back[checkingPos] != 0)
 			  {
-				if(vt < this.procVT[back[checkingPos]])
+				if(vt < this.procArr[back[checkingPos]].vt )
 				{
 					this.front[this.size - this.INI_SIZE] = checkingPos;
 					this.back[this.size - this.INI_SIZE] = back[checkingPos];
@@ -71,14 +71,14 @@ public class OrderedLinkedListRQ implements Runqueue {
 			  
 			  
 			}
-			else if(this.procVT[checkingPos] > vt)
+			else if(this.procArr[checkingPos].vt > vt)
 			{
 				
 				
 				
 			  if(front[checkingPos] != 0)
 			  {
-				if(vt >= this.procVT[this.front[checkingPos]])
+				if(vt >= this.procArr[this.front[checkingPos]].vt)
 				{
 					this.front[this.size-this.INI_SIZE] = this.front[checkingPos];
 					this.back[this.size - this.INI_SIZE] = checkingPos;
@@ -116,8 +116,8 @@ public class OrderedLinkedListRQ implements Runqueue {
 
 		//Expanding the array    
 		
-		this.procVT = Arrays.copyOf(this.procVT, this.size);
-		this.procList = Arrays.copyOf(this.procList, this.size);
+	
+		this.procArr = Arrays.copyOf(this.procArr, this.size);
 		this.front = Arrays.copyOf(this.front, this.size);
 		this.back = Arrays.copyOf(this.back, this.size);
 		
@@ -128,21 +128,20 @@ public class OrderedLinkedListRQ implements Runqueue {
     @Override
     public String dequeue() {
         
-    	String dequeue = null;
+    	Proc dequeue = null;
     	for(int x = 1; x < this.size; x++)
     	{
-    		if (this.front[x] == 0 && this.procList[x] != null)
+    		if (this.front[x] == 0 && this.procArr[x] != null)
     		{
-    			dequeue = this.procList[x];
-    			this.procList[x] = null;
-    			this.procVT[x] = 0;
+    			dequeue = this.procArr[x];
+    			this.procArr[x] = null;
     			this.front[this.back[x]] = 0;
     			this.back[x] = 0;break;
     			
     		}
     	}
  
-        return dequeue; // placeholder, modify this
+        return dequeue.label; // placeholder, modify this
     } // end of dequeue()
 
 
@@ -150,9 +149,9 @@ public class OrderedLinkedListRQ implements Runqueue {
     public boolean findProcess(String procLabel) {
     	boolean existed = false;
     
-        for(String x : this.procList)
+        for(Proc x : this.procArr)
         {
-        	if(x != null && x.equals(procLabel))
+        	if(x != null && x.label.equals(procLabel))
         	{
         		existed = true;
         	}
@@ -167,11 +166,10 @@ public class OrderedLinkedListRQ implements Runqueue {
         
         for(int x = 1; x< this.size;x++)
         {
-        	if(this.procList[x] != null && this.procList[x].equals(procLabel))
+        	if(this.procArr[x] != null && this.procArr[x].label.equals(procLabel))
         	{
         		
-        		this.procList[x] = null;
-        		this.procVT[x] = 0;
+        		this.procArr[x] = null;
         		this.front[this.back[x]] = this.front[x];
         		this.back[this.front[x]] = this.back[x];
         		this.front[x] = 0;
@@ -192,13 +190,13 @@ public class OrderedLinkedListRQ implements Runqueue {
     	int TotalPT = -1;
     	for (int x = 1; x < this.size; x++)
     	{
-    		if(this.procList[x] != null && this.procList[x].equals(procLabel))
+    		if(this.procArr[x] != null && this.procArr[x].label.equals(procLabel))
     		{
     			TotalPT++;
     			int checkingPos = this.front[x];
     			while(checkingPos !=0)
     			{
-    				TotalPT += this.procVT[checkingPos];
+    				TotalPT += this.procArr[checkingPos].vt;
     				checkingPos = this.front[checkingPos];
     			}
     			break;
@@ -214,13 +212,13 @@ public class OrderedLinkedListRQ implements Runqueue {
     	int TotalPT = -1;
     	for (int x = 1; x < this.size; x++)
     	{
-    		if(this.procList[x] != null && this.procList[x].equals(procLabel))
+    		if(this.procArr[x] != null && this.procArr[x].label.equals(procLabel))
     		{
     			TotalPT++;
     			int checkingPos = this.back[x];
     			while(checkingPos !=0)
     			{
-    				TotalPT += this.procVT[checkingPos];
+    				TotalPT += this.procArr[checkingPos].vt;
     				checkingPos = this.back[checkingPos];
     			}
     			break;
@@ -237,14 +235,14 @@ public class OrderedLinkedListRQ implements Runqueue {
     	String AllProc = "";
     	for (int x = 1; x < this.size; x++)
     	{
-    		if(this.procList[x] != null)
+    		if(this.procArr[x] != null)
     		{
     			if(this.front[x] == 0)
     			{
     				int checkingPos = x;
         			while(checkingPos != 0)
         			{
-        				AllProc += this.procList[checkingPos] + " ";
+        				AllProc += this.procArr[checkingPos].label + " ";
         				checkingPos = this.back[checkingPos];
         			}
         			break;
@@ -254,19 +252,7 @@ public class OrderedLinkedListRQ implements Runqueue {
     	
     	
     	
-   /* 	
-    	String Allproc = "";
-    	
-    	for(int x = 0 ; x < this.size; x++)
-    	{
-    		if(this.procList[x] != null)
-    		{
-    			Allproc += this.procList[x] + " ";
-    			Allproc += "front: " + this.front[x] + " ";
-    			Allproc += "back: " +this.back[x] + " " + '\n';
-    		}
-    	}
-    	*/
+   
     	os.println(AllProc);
     	
     	
