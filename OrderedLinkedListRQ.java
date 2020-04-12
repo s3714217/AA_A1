@@ -130,7 +130,7 @@ public class OrderedLinkedListRQ implements Runqueue {
     	Proc dequeue = null;
     	for(int x = 1; x < this.size; x++)
     	{
-    		if (this.procArr[x].neighbor2 == 0 && this.procArr[x] != null)
+    		if (this.procArr[x] != null && this.procArr[x].neighbor2 == 0 )
     		{
     			dequeue = this.procArr[x];
     			this.procArr[this.procArr[x].neighbor1].neighbor2 = 0;
@@ -168,11 +168,15 @@ public class OrderedLinkedListRQ implements Runqueue {
         	if(this.procArr[x] != null && this.procArr[x].label.equals(procLabel))
         	{
         		
-        		this.procArr[x] = null;
-        		this.procArr[this.procArr[x].neighbor1].neighbor2 = this.procArr[x].neighbor2;
+        		if(this.procArr[this.procArr[x].neighbor1] != null)
+        		{
+        			this.procArr[this.procArr[x].neighbor1].neighbor2 = this.procArr[x].neighbor2;
+        		}
+        		if(this.procArr[this.procArr[x].neighbor2] != null)
+        		{
         		this.procArr[this.procArr[x].neighbor2].neighbor1 = this.procArr[x].neighbor1;
-        		this.procArr[x].neighbor2 = 0;
-        		this.procArr[x].neighbor1 = 0;
+        		}
+        		this.procArr[x] = null;
         		removed = true;break;
         		
         	}
@@ -208,15 +212,18 @@ public class OrderedLinkedListRQ implements Runqueue {
 
     @Override
     public int succeedingProcessTime(String procLabel) {
+    	
     	int TotalPT = -1;
+    	
     	for (int x = 1; x < this.size; x++)
     	{
     		if(this.procArr[x] != null && this.procArr[x].label.equals(procLabel))
     		{
     			TotalPT++;
     			int checkingPos = this.procArr[x].neighbor1;
+    			System.out.println(this.procArr[x].label);
     			while(checkingPos !=0)
-    			{
+    			{System.out.println(this.procArr[checkingPos].label);
     				TotalPT += this.procArr[checkingPos].vt;
     				checkingPos = this.procArr[checkingPos].neighbor1;
     			}

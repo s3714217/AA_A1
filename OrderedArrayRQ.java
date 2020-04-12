@@ -115,10 +115,12 @@ public class OrderedArrayRQ implements Runqueue {
          
          if(!sorted)
          {this.Sorting();}
+         
          if(this.findProcess(procLabel))
      	{
          for(int x = 0; x< this.size;x++)
-         { if(this.procArray[x] != null)
+         { 
+        	 if(this.procArray[x] != null)
          	{	
         	
         		if(procLabel.equals(this.procArray[x].label))

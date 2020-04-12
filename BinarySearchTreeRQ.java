@@ -14,14 +14,14 @@ public class BinarySearchTreeRQ implements Runqueue {
 
 	private final int INI_SIZE = 1;
 	private int noNode=2, tempsize;
-	private String[] proctree, sortedArr;
-	private int[] left, right, vttree, sortedVt;
+	private Proc[] proctree, sortedArr;
+	
 	
     public BinarySearchTreeRQ() {
-        vttree = new int[noNode];
-        proctree = new String[noNode];
-        left = new int[noNode];
-        right = new int[noNode];
+        
+        proctree = new Proc[noNode];
+        proctree[0] = new Proc(null,-1);
+        proctree[1] = new Proc(null,-1);
         tempsize = 2;        
     }  // end of BinarySearchTreeRQ()
 
@@ -29,23 +29,22 @@ public class BinarySearchTreeRQ implements Runqueue {
     @Override
     public void enqueue(String procLabel, int vt) {	
     	
-    	this.proctree[this.noNode-this.INI_SIZE] = procLabel;
-		this.vttree[this.noNode-this.INI_SIZE] = vt;
+    	this.proctree[this.noNode-this.INI_SIZE] = new Proc(procLabel, vt);
 		
 		int checkingPos = 1;
 		while(checkingPos != 0)
 		{
 		  if(this.noNode > 2)
 		  {
-			if(this.vttree[checkingPos] <= vt)
+			if(this.proctree[checkingPos].vt <= vt)
 			{
-				if(right[checkingPos] > 0)
+				if(proctree[checkingPos].neighbor2 > 0)
 				{
-					checkingPos = right[checkingPos];
+					checkingPos = proctree[checkingPos].neighbor2;
 				}
 				else
 				{
-					right[checkingPos] = this.noNode - this.INI_SIZE;
+					proctree[checkingPos].neighbor2 = this.noNode - this.INI_SIZE;
 					
 					break;
 					
@@ -53,13 +52,13 @@ public class BinarySearchTreeRQ implements Runqueue {
 			}
 			else 
 			{
-				if(left[checkingPos] > 0)
+				if(proctree[checkingPos].neighbor1 > 0)
 				{
-					checkingPos = left[checkingPos];
+					checkingPos = proctree[checkingPos].neighbor1;
 				}
 				else
 				{
-					left[checkingPos] = this.noNode - this.INI_SIZE;break;
+					proctree[checkingPos].neighbor1 = this.noNode - this.INI_SIZE;break;
 				}
 			}
 		  }
@@ -72,24 +71,25 @@ public class BinarySearchTreeRQ implements Runqueue {
 		}
 		 this.noNode++;
 		  this.proctree = Arrays.copyOf(this.proctree, this.noNode);
-		  this.vttree = Arrays.copyOf(this.vttree, this.noNode);
-		  this.left = Arrays.copyOf(left, noNode);
-		  this.right = Arrays.copyOf(right, noNode);
+		  proctree[this.noNode - this.INI_SIZE] = new Proc(null,-1);
+		  
 	
     }
 
 
     @Override
     public String dequeue() {
+    
     	String dequeue = null;
     	this.setSortedArr();
-    	for(int x =0; x < this.noNode; x++)
+    	
+    	for(int x =1; x < this.noNode; x++)
     	{
     		if(this.sortedArr[1] == this.proctree[x])
-    		{
-    			dequeue = this.proctree[x];
-    			this.proctree[x] = null;
-    			this.vttree[x] = -1;break;
+    		{ 
+    			dequeue = this.proctree[x].label;
+    			this.proctree[x].label = null;
+    			this.proctree[x].vt = -1;break;
     		}
     	}
     	
@@ -100,9 +100,9 @@ public class BinarySearchTreeRQ implements Runqueue {
     @Override
     public boolean findProcess(String procLabel) {
         this.setSortedArr();
-        for(int x=0; x <this.tempsize;x++)
+        for(int x=1; x <this.tempsize;x++)
         {
-        	if(procLabel.equals(this.sortedArr[x]))
+        	if(this.sortedArr[x] != null &&procLabel.equals(this.sortedArr[x].label))
         	{
         		return true;
         	}
@@ -115,12 +115,13 @@ public class BinarySearchTreeRQ implements Runqueue {
     @Override
     public boolean removeProcess(String procLabel) {
         
-    	for(int x =0; x < this.noNode; x++)
+    	for(int x =1; x < this.noNode; x++)
     	{
-    		if(procLabel.equals(this.proctree[x]))
+    		if(procLabel.equals(this.proctree[x].label))
     		{
-    			this.proctree[x] = null;
-    			this.vttree[x] = -1;
+    			this.proctree[x].label = null;
+    			this.proctree[x].vt = -1;
+    			
     			return true;
     		}
     	}
@@ -130,25 +131,31 @@ public class BinarySearchTreeRQ implements Runqueue {
 
     @Override
     public int precedingProcessTime(String procLabel) {
-    	int totalPt = 0;
+    	int totalPt = -1;
     	this.setSortedArr();
-    	for(int x =0; x < this.tempsize; x++)
+    	if(this.findProcess(procLabel))
     	{
-    		if(procLabel.equals(this.sortedArr[x]))
+    	for(int x =1; x < this.tempsize; x++)
+    	{
+    		if(this.sortedArr[x] != null )
     		{	
     			
-    			for(int y = 0; y < this.tempsize; y++)
-    			{
-    				if(x > y && this.sortedVt[x] > this.sortedVt[y])
+    			
+    				  if(procLabel.equals(this.sortedArr[x].label))
     				{
-    					totalPt += this.sortedVt[y];
+    					  totalPt++;
+    					  break;
     				}
+    				  
+    				  totalPt += this.sortedArr[x].vt;
     			}
-    			return totalPt;
+    			
     		}
     	}
+    		return totalPt;
+    	
 
-        return -1; // placeholder, modify this
+         // placeholder, modify this
     } // end of precedingProcessTime()
 
 
@@ -156,16 +163,17 @@ public class BinarySearchTreeRQ implements Runqueue {
     public int succeedingProcessTime(String procLabel) {
     	int totalPt = 0;
     	this.setSortedArr();
-    	for(int x =0; x < this.tempsize; x++)
+    	
+    	for(int x =1; x < this.tempsize; x++)
     	{
-    		if(procLabel.equals(this.sortedArr[x]))
+    		if(this.sortedArr[x] != null &&procLabel.equals(this.sortedArr[x].label))
     		{	
     			
     			for(int y = 0; y < this.tempsize; y++)
     			{
-    				if(x < y && this.sortedVt[x] <= this.sortedVt[y])
+    				if(x < y && this.sortedArr[x].vt <= this.sortedArr[y].vt)
     				{
-    					totalPt += this.sortedVt[y];
+    					totalPt += this.sortedArr[y].vt;
     				}
     			}
     			return totalPt;
@@ -178,31 +186,32 @@ public class BinarySearchTreeRQ implements Runqueue {
 
     @Override
     public void printAllProcesses(PrintWriter os) {
-        
+        String str ="";
     	this.setSortedArr();
-     for(int x =0; x < this.noNode; x++)
+     for(int x =1; x < this.noNode; x++)
      {
     	 if(this.sortedArr[x] != null)
     	 {
-    		 os.print(this.sortedArr[x] + " ");
+    		 str += this.sortedArr[x].label + " ";
     		 
     	 }
      }
-     os.print('\n');
+     os.println(str);
     } // end of printAllProcess()
     
     private void Treesort(int root)
     {
     	if(root != 0)
     	{	
-    		Treesort(left[root]);
-    		if(this.proctree[root] != null)
+    		Treesort(proctree[root].neighbor1);
+    		
+    		if(this.proctree[root].label != null)
     		{
     			this.sortedArr[tempsize] = this.proctree[root];
-    			this.sortedVt[tempsize] = this.vttree[root];
+    			
     			tempsize++;
     		}
-    		Treesort(right[root]);
+    		Treesort(proctree[root].neighbor2);
     		
     	}
     }
@@ -210,9 +219,9 @@ public class BinarySearchTreeRQ implements Runqueue {
     private void setSortedArr()
     {
     	this.tempsize = 1;
-    	this.sortedArr= new String[this.noNode];
-    	this.sortedVt = new int[this.noNode];
-    	this.Treesort(tempsize);
+    	this.sortedArr= new Proc[this.noNode];
+    	this.Treesort(1);
+    	
     }
     
     
