@@ -14,7 +14,7 @@ public class OrderedLinkedListRQ implements Runqueue {
 	
 	private int size;
 	//private String procList[];
-	private int front[], back[];
+	//private int front[], back[];
 	//private int procVT[];
 	private Proc procArr[];
 	private final int INI_SIZE = 1;
@@ -23,8 +23,8 @@ public class OrderedLinkedListRQ implements Runqueue {
     public OrderedLinkedListRQ() {
     	size = 2;
         procArr = new Proc[size];
-    	front = new int[size];
-    	back = new int[size];
+    	//front = new int[size];
+    	//back = new int[size];
     }  // end of OrderedLinkedList()
 
 
@@ -46,26 +46,26 @@ public class OrderedLinkedListRQ implements Runqueue {
 			{
 				
 				
-			  if(back[checkingPos] != 0)
+			  if(this.procArr[checkingPos].neighbor1 != 0)
 			  {
-				if(vt < this.procArr[back[checkingPos]].vt )
+				if(vt < this.procArr[this.procArr[checkingPos].neighbor1].vt )
 				{
-					this.front[this.size - this.INI_SIZE] = checkingPos;
-					this.back[this.size - this.INI_SIZE] = back[checkingPos];
-					this.front[this.back[checkingPos]] = this.size - this.INI_SIZE;
-					this.back[checkingPos] = this.size - this.INI_SIZE;break;
+					this.procArr[this.size - this.INI_SIZE].neighbor2 = checkingPos;
+					this.procArr[this.size - this.INI_SIZE].neighbor1 = this.procArr[checkingPos].neighbor1;
+					this.procArr[this.procArr[checkingPos].neighbor1].neighbor2 = this.size - this.INI_SIZE;
+					this.procArr[checkingPos].neighbor1 = this.size - this.INI_SIZE;break;
 					
 				}
 				else 
 				{
-					checkingPos = this.back[checkingPos];
+					checkingPos = this.procArr[checkingPos].neighbor1;
 				}
 			  }
 			  else
 			  {
-				  this.front[this.size - this.INI_SIZE] = checkingPos;
-				  this.back[this.size - this.INI_SIZE] = this.back[checkingPos];
-				  this.back[checkingPos] = this.size - this.INI_SIZE;break;
+				  this.procArr[this.size - this.INI_SIZE].neighbor2 = checkingPos;
+				  this.procArr[this.size - this.INI_SIZE].neighbor1 = this.procArr[checkingPos].neighbor1;
+				  this.procArr[checkingPos].neighbor1 = this.size - this.INI_SIZE;break;
 			  }
 			  
 			  
@@ -76,27 +76,27 @@ public class OrderedLinkedListRQ implements Runqueue {
 				
 				
 				
-			  if(front[checkingPos] != 0)
+			  if(this.procArr[checkingPos].neighbor2 != 0)
 			  {
-				if(vt >= this.procArr[this.front[checkingPos]].vt)
+				if(vt >= this.procArr[this.procArr[checkingPos].neighbor2].vt)
 				{
-					this.front[this.size-this.INI_SIZE] = this.front[checkingPos];
-					this.back[this.size - this.INI_SIZE] = checkingPos;
-					this.back[this.front[checkingPos]] = this.size - this.INI_SIZE;
-					this.front[checkingPos] = this.size - this.INI_SIZE;break;
+					this.procArr[this.size-this.INI_SIZE].neighbor2 = this.procArr[checkingPos].neighbor2;
+					this.procArr[this.size - this.INI_SIZE].neighbor1 = checkingPos;
+					this.procArr[this.procArr[checkingPos].neighbor2].neighbor1 = this.size - this.INI_SIZE;
+					this.procArr[checkingPos].neighbor2 = this.size - this.INI_SIZE;break;
 					
 				}
 				else
 				{
-					checkingPos = this.front[checkingPos];
+					checkingPos = this.procArr[checkingPos].neighbor2;
 				}
 			  }
 			  else 
 			  {
 				
-				this.back[this.size - this.INI_SIZE] = checkingPos;
-				this.front[this.size-this.INI_SIZE] = this.front[checkingPos];
-				this.front[checkingPos] = this.size - this.INI_SIZE;break;
+				this.procArr[this.size - this.INI_SIZE].neighbor1 = checkingPos;
+				this.procArr[this.size-this.INI_SIZE].neighbor2 = this.procArr[checkingPos].neighbor2;
+				this.procArr[checkingPos].neighbor2 = this.size - this.INI_SIZE;break;
 			  }
 			  
 			  
@@ -118,8 +118,7 @@ public class OrderedLinkedListRQ implements Runqueue {
 		
 	
 		this.procArr = Arrays.copyOf(this.procArr, this.size);
-		this.front = Arrays.copyOf(this.front, this.size);
-		this.back = Arrays.copyOf(this.back, this.size);
+		
 		
 
     } // end of enqueue()
@@ -131,12 +130,12 @@ public class OrderedLinkedListRQ implements Runqueue {
     	Proc dequeue = null;
     	for(int x = 1; x < this.size; x++)
     	{
-    		if (this.front[x] == 0 && this.procArr[x] != null)
+    		if (this.procArr[x].neighbor2 == 0 && this.procArr[x] != null)
     		{
     			dequeue = this.procArr[x];
+    			this.procArr[this.procArr[x].neighbor1].neighbor2 = 0;
     			this.procArr[x] = null;
-    			this.front[this.back[x]] = 0;
-    			this.back[x] = 0;break;
+    			;break;
     			
     		}
     	}
@@ -170,10 +169,10 @@ public class OrderedLinkedListRQ implements Runqueue {
         	{
         		
         		this.procArr[x] = null;
-        		this.front[this.back[x]] = this.front[x];
-        		this.back[this.front[x]] = this.back[x];
-        		this.front[x] = 0;
-        		this.back[x] = 0;
+        		this.procArr[this.procArr[x].neighbor1].neighbor2 = this.procArr[x].neighbor2;
+        		this.procArr[this.procArr[x].neighbor2].neighbor1 = this.procArr[x].neighbor1;
+        		this.procArr[x].neighbor2 = 0;
+        		this.procArr[x].neighbor1 = 0;
         		removed = true;break;
         		
         	}
@@ -193,11 +192,11 @@ public class OrderedLinkedListRQ implements Runqueue {
     		if(this.procArr[x] != null && this.procArr[x].label.equals(procLabel))
     		{
     			TotalPT++;
-    			int checkingPos = this.front[x];
+    			int checkingPos = this.procArr[x].neighbor2;
     			while(checkingPos !=0)
     			{
     				TotalPT += this.procArr[checkingPos].vt;
-    				checkingPos = this.front[checkingPos];
+    				checkingPos = this.procArr[checkingPos].neighbor2;
     			}
     			break;
     		}
@@ -215,11 +214,11 @@ public class OrderedLinkedListRQ implements Runqueue {
     		if(this.procArr[x] != null && this.procArr[x].label.equals(procLabel))
     		{
     			TotalPT++;
-    			int checkingPos = this.back[x];
+    			int checkingPos = this.procArr[x].neighbor1;
     			while(checkingPos !=0)
     			{
     				TotalPT += this.procArr[checkingPos].vt;
-    				checkingPos = this.back[checkingPos];
+    				checkingPos = this.procArr[checkingPos].neighbor1;
     			}
     			break;
     		}
@@ -237,13 +236,13 @@ public class OrderedLinkedListRQ implements Runqueue {
     	{
     		if(this.procArr[x] != null)
     		{
-    			if(this.front[x] == 0)
+    			if(this.procArr[x].neighbor2 == 0)
     			{
     				int checkingPos = x;
         			while(checkingPos != 0)
         			{
         				AllProc += this.procArr[checkingPos].label + " ";
-        				checkingPos = this.back[checkingPos];
+        				checkingPos = this.procArr[checkingPos].neighbor1;
         			}
         			break;
     			}
