@@ -32,7 +32,7 @@ public class OrderedArrayRQ implements Runqueue {
     @Override
     public void enqueue(String procLabel, int vt) {
         // Implement me
-    	
+    	 
    		//Assign the proc and its vt
     	Proc temp = new Proc(procLabel, vt);
     	this.procArray[this.size-this.INI_SIZE] = temp;
@@ -44,6 +44,7 @@ public class OrderedArrayRQ implements Runqueue {
     	this.sorted = false;
     	
     	
+    	
     
     } // end of enqueue()
 
@@ -51,14 +52,17 @@ public class OrderedArrayRQ implements Runqueue {
     public String dequeue() {
     	
         Proc temp = null;
-        if(!sorted)
-    	{this.Sorting();}
+//        if(!sorted)
+//    	{this.Sorting();}
     	for(int x = 0; x < size; x++)
     	{
     		if(this.procArray[x] != null)
     		{
     			temp = procArray[x];
-    			this.removeProcess(procArray[x].label);break;
+    			this.procArray[x] = null;
+    			this.Sorting();break;
+    		
+    			
     		}
     	}
     	
@@ -99,7 +103,8 @@ public class OrderedArrayRQ implements Runqueue {
     		if(this.procArray[x] != null && this.procArray[x].label.equals(procLabel))
     		{
     			this.procArray[x] = null;
-    			removed = true;break;
+    			removed = true;
+    			this.Sorting();break;
     		}
     	}
     	
