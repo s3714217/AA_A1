@@ -15,8 +15,6 @@ public class OrderedArrayRQ implements Runqueue {
 
     
 	private int size;
-	//private String procArray[];
-	//private int procVT[];
 	
 	private Proc procArray[];
 	
@@ -26,14 +24,18 @@ public class OrderedArrayRQ implements Runqueue {
     public OrderedArrayRQ() {
         size = INI_SIZE;
         procArray = new Proc[size];
-    //	procVT = new int[size];
+    
     }  // end of OrderedArrayRQ()
 
     @Override
     public void enqueue(String procLabel, int vt) {
-        // Implement me
+     /*
+      * Assign new proc to the end of array
+      * Increase the size of the array
+      * Set sorted status to false
+      */
     	 
-   		//Assign the proc and its vt
+   		
     	Proc temp = new Proc(procLabel, vt);
     	this.procArray[this.size-this.INI_SIZE] = temp;
     	this.size++;
@@ -50,10 +52,11 @@ public class OrderedArrayRQ implements Runqueue {
 
     @Override
     public String dequeue() {
-    	
+    	/*
+    	 * Get and removed the first proc the array
+    	 */
         Proc temp = null;
-//        if(!sorted)
-//    	{this.Sorting();}
+       
     	for(int x = 0; x < size; x++)
     	{
     		if(this.procArray[x] != null)
@@ -74,6 +77,10 @@ public class OrderedArrayRQ implements Runqueue {
     @Override
     public boolean findProcess(String procLabel){
         
+    	/*
+    	 * Loop through the array to find the proc
+    	 */
+    	
     	Proc Proc = null;
     	for(Proc x: this.procArray)
     	{
@@ -96,7 +103,10 @@ public class OrderedArrayRQ implements Runqueue {
 
     @Override
     public boolean removeProcess(String procLabel) {
-    	
+    	/*
+    	 * Loop through the array to find the proc
+    	 * Return true after removed the proc
+    	 */
     	boolean removed = false;
     	for(int x= 0; x < this.size; x++)
     	{
@@ -115,7 +125,11 @@ public class OrderedArrayRQ implements Runqueue {
 
     @Override
     public int precedingProcessTime(String procLabel) {
-        
+        /*
+         * Loop through the array to find the postion proc
+         * Calculate all vt of the previous proc
+         * return the calculated vt
+         */
     	 int totalPt = -1;
          
          if(!sorted)
@@ -148,6 +162,12 @@ public class OrderedArrayRQ implements Runqueue {
 
     @Override
     public int succeedingProcessTime(String procLabel) {
+    	/*
+         * Loop through the array to find the postion proc
+         * Calculate all vt of the after proc
+         * return the calculated vt
+         */
+    	
       int totalPt = -1;
       
       if(!sorted)
@@ -180,7 +200,12 @@ public class OrderedArrayRQ implements Runqueue {
 
     @Override
     public void printAllProcesses(PrintWriter os) {
-    	
+    	/*
+    	 * Sorting the array if it wasn't sorted
+         * Loop through the array 
+         * Add the label to the String 
+         * return the String
+         */
     	String AllProc = "";
     	this.Sorting();
     	
@@ -198,7 +223,7 @@ public class OrderedArrayRQ implements Runqueue {
     }// end of printAllProcesses()
     
     private void Sorting()
-    {//bubble sorting 
+    {//Bubble sorting 
     	
     	int checkingPos = 0;
     	int sortedProc = 0;
@@ -235,5 +260,3 @@ public class OrderedArrayRQ implements Runqueue {
     }
 
 } // end of class OrderedArrayRQ
-
-
