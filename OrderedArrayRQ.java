@@ -65,14 +65,14 @@ public class OrderedArrayRQ implements Runqueue {
     		{
     			temp = procArray[x];
     			this.procArray[x] = null;
-    			this.Sorting();break;
-    		
+    			this.Sorting();
+    	    	return temp.label;
     			
     		}
     	}
     	
-    	
-    	return temp.label;
+    	return null;
+
     	// placeholder,modify this
     } // end of dequeue()
 
@@ -228,68 +228,96 @@ public class OrderedArrayRQ implements Runqueue {
     private void Sorting()
     {//Bubble sorting 
     	
-    	int checkingPos = 0;
-    	int sortedProc = 0;
+//    	int checkingPos = 0;
+//    	int sortedProc = 0;
+//    	
+//    	while(sortedProc <= this.size)
+//    	{
+//    		
+//    		if(checkingPos == this.size -2)
+//    		{
+//    			sortedProc++;
+//    			checkingPos = 0;
+//    		}
+//    	  if(this.procArray[checkingPos] != null )
+//    	  {
+//    		if(this.procArray[checkingPos+1] != null)
+//    		{
+//    			if(this.procArray[checkingPos].vt > this.procArray[checkingPos+1].vt)
+//    			{
+//    				
+//    			
+//    			Proc temp;
+//    			
+//    			temp = this.procArray[checkingPos];
+//    			
+//    			this.procArray[checkingPos] = this.procArray[checkingPos+1];
+//    			
+//    			this.procArray[checkingPos+1] = temp;
+//    			
+//    			
+//    			}
+//    			checkingPos++;
+//    			
+//    		}
+//    		else
+//    		{
+//    			int x =1;
+//    			//ignoring the null node and find the next node to sort
+//    			while (procArray[checkingPos+x] != null)
+//    			{
+//    				x++;
+//    			}
+//    			Proc temp;
+//    			
+//    			temp = this.procArray[checkingPos];
+//    			
+//    			this.procArray[checkingPos] = this.procArray[checkingPos+1];
+//    			
+//    			this.procArray[checkingPos+1] = temp;
+//    			
+//    			checkingPos = checkingPos+x;
+//    			
+//    		}
+//    		
+//    		
+//    	  }
+//    	  else
+//    	  {
+//    		  checkingPos++;
+//    	  }
+//    		
+//    		
+//    			
+//    	}
     	
-    	while(sortedProc <= this.size)
-    	{
-    		
-    		if(checkingPos == this.size -2)
-    		{
-    			sortedProc++;
-    			checkingPos = 0;
-    		}
-    	  if(this.procArray[checkingPos] != null )
-    	  {
-    		if(this.procArray[checkingPos+1] != null)
-    		{
-    			if(this.procArray[checkingPos].vt > this.procArray[checkingPos+1].vt)
-    			{
-    				
-    			
-    			Proc temp;
-    			
-    			temp = this.procArray[checkingPos];
-    			
-    			this.procArray[checkingPos] = this.procArray[checkingPos+1];
-    			
-    			this.procArray[checkingPos+1] = temp;
-    			
-    			
-    			}
-    			checkingPos++;
-    			
-    		}
-    		else
-    		{
-    			int x =1;
-    			//ignoring the null node and find the next node to sort
-    			while (procArray[checkingPos+x] != null)
-    			{
-    				x++;
-    			}
-    			Proc temp;
-    			
-    			temp = this.procArray[checkingPos];
-    			
-    			this.procArray[checkingPos] = this.procArray[checkingPos+1];
-    			
-    			this.procArray[checkingPos+1] = temp;
-    			
-    			checkingPos = checkingPos+x;
-    			
-    		}
-    		
-    		
-    	  }
-    	  else
-    	  {
-    		  checkingPos++;
-    	  }
-    		
-    		
-    			
-    	}
+    	 int n = this.size; 
+         for (int x = 0; x < n-1; x++) {
+             for (int y = 0; y < n-x-1; y++) {
+            	if(this.procArray[y] != null)
+            	{
+            	   if(this.procArray[y+1] != null)
+            	   {
+            		if (this.procArray[y].vt > this.procArray[y+1].vt) 
+            		{	 
+                     // swap arr[j+1] and arr[i] 
+                     Proc temp = this.procArray[y]; 
+                     this.procArray[y] = this.procArray[y+1]; 
+                     this.procArray[y+1] = temp; 
+            		} 
+            	   }
+            	   else
+            	   {
+            		   int z =1;
+            		   while(y+z+1 < this.size && this.procArray[y+z] == null)
+            		   {
+            			   x++;
+            		   }
+            	   }
+            	}
+            	
+             }
+         }
     	this.sorted = true;
     }
 
