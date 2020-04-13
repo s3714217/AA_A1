@@ -28,7 +28,13 @@ public class BinarySearchTreeRQ implements Runqueue {
 
     @Override
     public void enqueue(String procLabel, int vt) {	
-    	
+    	/*
+    	 * Assign the new proc to bace of the array
+    	 * Looping through the array to find the left and right child node
+    	 * Assign the left and right child node
+    	 * Increase the size of array
+    	 * 
+    	 */
     	this.proctree[this.noNode-this.INI_SIZE] = new Proc(procLabel, vt);
 		
 		int checkingPos = 1;
@@ -80,6 +86,11 @@ public class BinarySearchTreeRQ implements Runqueue {
     @Override
     public String dequeue() {
     
+    	/*
+    	 * Sorting the tree
+    	 * Add all sorted node to an array
+    	 * return the front node of the sorted array 
+    	 */
     	String dequeue = null;
     	this.setSortedArr();
     	
@@ -99,10 +110,14 @@ public class BinarySearchTreeRQ implements Runqueue {
 
     @Override
     public boolean findProcess(String procLabel) {
-        this.setSortedArr();
+    	/*
+    	 * looping through the array to find the proc
+    	 * return true if found the node
+    	 */
+       
         for(int x=1; x <this.tempsize;x++)
         {
-        	if(this.sortedArr[x] != null &&procLabel.equals(this.sortedArr[x].label))
+        	if(this.proctree[x] != null &&procLabel.equals(this.proctree[x].label))
         	{
         		return true;
         	}
@@ -114,7 +129,11 @@ public class BinarySearchTreeRQ implements Runqueue {
 
     @Override
     public boolean removeProcess(String procLabel) {
-        
+    	/*
+    	 * looping through the array to find the proc
+    	 * remove the proc
+    	 * return true if found the node and removed
+    	 */
     	for(int x =1; x < this.noNode; x++)
     	{
     		if(procLabel.equals(this.proctree[x].label))
@@ -131,6 +150,13 @@ public class BinarySearchTreeRQ implements Runqueue {
 
     @Override
     public int precedingProcessTime(String procLabel) {
+    	
+    	/*
+    	 * looping through the sorted array of the tree
+    	 * find the location of the node
+    	 * calculate all vt of previous node
+    	 * return total vt
+    	 */
     	int totalPt = -1;
     	this.setSortedArr();
     	if(this.findProcess(procLabel))
@@ -161,6 +187,12 @@ public class BinarySearchTreeRQ implements Runqueue {
 
     @Override
     public int succeedingProcessTime(String procLabel) {
+    	/*
+    	 * looping through the sorted array of the tree
+    	 * find the location of the node
+    	 * calculate all vt of after node
+    	 * return total vt
+    	 */
     	int totalPt = 0;
     	this.setSortedArr();
     	
@@ -186,6 +218,11 @@ public class BinarySearchTreeRQ implements Runqueue {
 
     @Override
     public void printAllProcesses(PrintWriter os) {
+    	/*
+    	 * looping through the sorted array of the tree
+    	 * add all node label to a string
+    	 * return a string
+    	 */
         String str ="";
     	this.setSortedArr();
      for(int x =1; x < this.noNode; x++)
@@ -200,7 +237,9 @@ public class BinarySearchTreeRQ implements Runqueue {
     } // end of printAllProcess()
     
     private void Treesort(int root)
-    {
+    {/*
+       Using tree sort to sort the proctree and add all sorted node to an array
+     	*/
     	if(root != 0)
     	{	
     		Treesort(proctree[root].neighbor1);
@@ -218,6 +257,10 @@ public class BinarySearchTreeRQ implements Runqueue {
     
     private void setSortedArr()
     {
+    	/*
+    	 * Initializing the sortedArr
+    	 * Calling the recursive Treesort()
+    	 */
     	this.tempsize = 1;
     	this.sortedArr= new Proc[this.noNode];
     	this.Treesort(1);
