@@ -55,6 +55,8 @@ public class OrderedArrayRQ implements Runqueue {
     	/*
     	 * Get and removed the first proc the array
     	 */
+    	if(!sorted)
+        {this.Sorting();}
         Proc temp = null;
        
     	for(int x = 0; x < size; x++)
@@ -207,7 +209,8 @@ public class OrderedArrayRQ implements Runqueue {
          * return the String
          */
     	String AllProc = "";
-    	this.Sorting();
+    	if(!sorted)
+        {this.Sorting();}
     	
     	for (int x = 0; x < this.size; x++)
     	{
@@ -236,10 +239,13 @@ public class OrderedArrayRQ implements Runqueue {
     			sortedProc++;
     			checkingPos = 0;
     		}
-    	  if(this.procArray[checkingPos] != null && this.procArray[checkingPos+1] != null)
+    	  if(this.procArray[checkingPos] != null )
     	  {
-    		if(this.procArray[checkingPos].vt > this.procArray[checkingPos+1].vt)
+    		if(this.procArray[checkingPos+1] != null)
     		{
+    			if(this.procArray[checkingPos].vt > this.procArray[checkingPos+1].vt)
+    			{
+    				
     			
     			Proc temp;
     			
@@ -250,10 +256,38 @@ public class OrderedArrayRQ implements Runqueue {
     			this.procArray[checkingPos+1] = temp;
     			
     			
+    			}
+    			checkingPos++;
+    			
     		}
+    		else
+    		{
+    			int x =1;
+    			//ignoring the null node and find the next node to sort
+    			while (procArray[checkingPos+x] != null)
+    			{
+    				x++;
+    			}
+    			Proc temp;
+    			
+    			temp = this.procArray[checkingPos];
+    			
+    			this.procArray[checkingPos] = this.procArray[checkingPos+1];
+    			
+    			this.procArray[checkingPos+1] = temp;
+    			
+    			checkingPos = checkingPos+x;
+    			
+    		}
+    		
+    		
+    	  }
+    	  else
+    	  {
+    		  checkingPos++;
     	  }
     		
-    		checkingPos++;
+    		
     			
     	}
     	this.sorted = true;
